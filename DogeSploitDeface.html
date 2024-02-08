@@ -160,11 +160,7 @@
         <option value="social-engineering">Social Engineering</option>
       </select>
       <br>
-      <div class="preview">
-        <iframe id="preview-iframe"></iframe>
-      </div>
-      <br>
-      <input type="submit" value="Attack">
+      <button type="submit">Attack</button>
     </form>
 
     <div class="progress-bar">
@@ -319,68 +315,6 @@
       }
     });
   </script>
+</body>
 
-  <?php
-  if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Get the form data
-    $url = $_POST['url'];
-    $message = $_POST['message'];
-    $randomMessage = $_POST['random_message'];
-    $attackType = $_POST['attack_type'];
-
-    // Validate the form data
-    if (empty($url)) {
-      $error = 'Please enter a URL.';
-    }
-
-    // If there are no errors, proceed with the attack
-    if (empty($error)) {
-      // Generate a random message if the user selected the random message option
-      if ($randomMessage) {
-        $messages = [
-          'Hacked by DogeSploit.sh!',
-          'Your website has been pwned!',
-          'All your data is belong to us!',
-          'We are Legion.',
-          'We are Anonymous.',
-          'Expect us.',
-        ];
-
-        $message = $messages[array_rand($messages)];
-      }
-
-      // Deface the website
-      $ch = curl_init();
-      curl_setopt($ch, CURLOPT_URL, $url);
-      curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-      $websiteContent = curl_exec($ch);
-      curl_close($ch);
-
-      $websiteContent = str_replace('</body>', "<body bgcolor='#000' text='#f00'><h1>$message</h1></body>", $websiteContent);
-
-      // Save the defaced website to a file
-      $filename = 'defaced-' . time() . '.html';
-      file_put_contents($filename, $websiteContent);
-
-      // Return a success message
-      $success = true;
-      $data = array(
-        'success' => $success,
-        'error' => $error,
-        'filename' => $filename,
-      );
-
-      echo json_encode($data);
-    } else {
-      // Return an error message
-      $success = false;
-      $data = array(
-        'success' => $success,
-        'error' => $error,
-      );
-
-      echo json_encode($data);
-    }
-  }
-  ?>
 </html>
