@@ -152,11 +152,19 @@
       <label for="random-message">Random Message:</label>
       <input type="checkbox" id="random-message" name="random-message">
       <br>
+      <label for="attack-type">Attack Type:</label>
+      <select id="attack-type" name="attack-type">
+        <option value="deface">Deface Website</option>
+        <option value="ddos">DDoS Attack</option>
+        <option value="exploit">Exploit Vulnerability</option>
+        <option value="social-engineering">Social Engineering</option>
+      </select>
+      <br>
       <div class="preview">
         <iframe id="preview-iframe"></iframe>
       </div>
       <br>
-      <input type="submit" value="Deface">
+      <input type="submit" value="Attack">
     </form>
 
     <div class="progress-bar">
@@ -176,6 +184,7 @@
     const urlInput = document.querySelector('input[name="url"]');
     const messageInput = document.querySelector('textarea[name="message"]');
     const randomMessageInput = document.querySelector('input[name="random-message"]');
+    const attackTypeSelect = document.querySelector('select[name="attack-type"]');
 
     // Get the progress bar elements
     const progressBar = document.querySelector('.progress-bar');
@@ -198,20 +207,19 @@
       // Show the progress bar
       progressBar.classList.remove('hidden');
 
-      // Get the URL and message from the form inputs
+      // Get the URL, message, and attack type from the form inputs
       const url = urlInput.value;
       const message = messageInput.value;
-
-      // Check if the user wants a random message
       const randomMessage = randomMessageInput.checked;
+      const attackType = attackTypeSelect.value;
 
-      // Send the URL and message to the server
+      // Send the URL, message, and attack type to the server
       fetch('<?php echo $_SERVER['PHP_SELF']; ?>', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url, message, randomMessage }),
+        body: JSON.stringify({ url, message, randomMessage, attackType }),
       })
         .then((response) => response.json())
         .then((data) => {
@@ -295,6 +303,21 @@
       // Return the random message
       return randomMessage;
     }
+
+    // Add an event listener for the attack type select
+    attackTypeSelect.addEventListener('change', (event) => {
+      // Get the attack type from the select
+      const attackType = event.target.value;
+
+      // Show or hide the message input and preview iframe based on the attack type
+      if (attackType === 'deface') {
+        messageInput.style.display = 'block';
+        preview.style.display = 'block';
+      } else {
+        messageInput.style.display = 'none';
+        preview.style.display = 'none';
+      }
+    });
   </script>
 </body>
 
