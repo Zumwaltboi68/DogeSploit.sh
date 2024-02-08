@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>DogeSploit.sh - Website Defacer by Zumwaltboi68</title>
+  <style>
+    /* Reset */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    /* Body */
+
+    body {
+      font-family: sans-serif;
+      background-color: #000;
+      color: #fff;
+    }
+
+    /* Container */
+
+    .container {
+      max-width: 600px;
+      padding: 30px;
+      margin: 0 auto;
+    }
+
+    /* Form */
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    label {
+      font-size: 1.2rem;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #999;
+      border-radius: 5px;
+    }
+
+    textarea {
+      height: 200px;
+    }
+
+    /* Submit button */
+
+    input[type="submit"] {
+      background-color: #f00;
+      color: #fff;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    input[type="submit"]:hover {
+      background-color: #d00;
+    }
+
+    /* Progress bar */
+
+    .progress-bar {
+      width: 100%;
+      height: 10px;
+      background-color: #333;
+      border: 1px solid #999;
+      border-radius: 5px;
+    }
+
+    .progress-bar-fill {
+      width: 0%;
+      height: 100%;
+      background-color: #f00;
+      border-radius: 5px;
+    }
+
+    /* Modal */
+
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: none;
+    }
+
+    .modal-content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 30px;
+      background-color: #fff;
+      border: 1px solid #999;
+      border-radius: 5px;
+    }
+
+    /* Success message */
+
+    .success {
+      color: #0f0;
+    }
+
+    /* Error message */
+
+    .error {
+      color: #f00;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <h1>DogeSploit.sh</h1>
+    <h2>Website Defacer</h2>
+    <p>Created by Zumwaltboi68</p>
+    <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
+      <label for="url">URL:</label>
+      <input type="text" id="url" name="url" placeholder="https://example.com">
+      <br>
+      <label for="message">Message:</label>
+      <textarea id="message" name="message" placeholder="Your message here"></textarea>
+      <br>
+      <input type="submit" value="Deface">
+    </form>
+
+    <div class="progress-bar">
+      <div class="progress-bar-fill"></div>
+    </div>
+
+    <div class="modal">
+      <div class="modal-content">
+        <iframe id="defaced-website"></iframe>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Get the form elements
+    const form = document.querySelector('form');
+    const urlInput = document.querySelector('input[name="url"]');
+    const messageInput = document.querySelector('textarea[name="message"]');
+
+    // Get the progress bar elements
+    const progressBar = document.querySelector('.progress-bar');
+    const progressBarFill = document.querySelector('.progress-bar-fill');
+
+    // Get the modal elements
+    const modal = document.querySelector('.modal');
+    const modalContent = document.querySelector('.modal-content');
+    const defacedWebsite = document.querySelector('#defaced-website');
+
+    // Add an event listener for the form submit event
+    form.addEventListener('submit', (event) => {
+      // Prevent the form from submitting
+      event.preventDefault();
+
+      // Show the progress bar
+      progressBar.classList.remove('hidden');
+
+      // Get the URL and message from the form inputs
+      const url = urlInput.value;
+      const message = messageInput.value;
+
+      // Send the URL and message to the server
+      fetch('<?php echo $_SERVER['PHP_SELF']; ?>', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url, message }),
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          // Hide the progress bar
+          progressBar.classList.add('hidden');
+
+          // Display the success or error message
+          if (data.success) {
+            // Show the modal with the defaced website
+            modal.style.display = 'block';
+            defacedWebsite.src = url;
+          } else {
+            alert('Error: ' + data.error);
+          }
+        })
+        .catch((error) => {
+          // Hide the progress bar
+          progressBar.classList.add('hidden');
+
+          alert('Error: ' + error.message);
+        });
+    });
+
+    // Add an event listener for the modal close button
+    modalContent.addEventListener('click', (event) => {
+      // Hide the modal
+      modal.style.display = 'none';
+    });
+  </script>
+</body>
+
+</html>
