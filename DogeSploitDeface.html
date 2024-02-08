@@ -144,7 +144,7 @@
     <p>Created by Zumwaltboi68</p>
     <form action="<?php echo $_SERVER['PHP_SELF']; ?>" method="post">
       <label for="url">URL:</label>
-      <input type="text" id="url" name="url" placeholder="https://example.com">
+      <input type="text" id="url" name="url" placeholder="https://example.com" required>
       <br>
       <label for="message">Message:</label>
       <textarea id="message" name="message" placeholder="Your message here"></textarea>
@@ -153,7 +153,7 @@
       <input type="checkbox" id="random-message" name="random-message">
       <br>
       <label for="attack-type">Attack Type:</label>
-      <select id="attack-type" name="attack-type">
+      <select id="attack-type" name="attack-type" required>
         <option value="deface">Deface Website</option>
         <option value="ddos">DDoS Attack</option>
         <option value="exploit">Exploit Vulnerability</option>
