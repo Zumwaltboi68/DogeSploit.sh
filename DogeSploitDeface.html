@@ -107,6 +107,22 @@
       border-radius: 5px;
     }
 
+    /* Preview */
+
+    .preview {
+      position: relative;
+      width: 100%;
+      height: 300px;
+      border: 1px solid #999;
+      border-radius: 5px;
+      overflow: auto;
+    }
+
+    #preview-iframe {
+      width: 100%;
+      height: 100%;
+    }
+
     /* Success message */
 
     .success {
@@ -133,6 +149,13 @@
       <label for="message">Message:</label>
       <textarea id="message" name="message" placeholder="Your message here"></textarea>
       <br>
+      <label for="random-message">Random Message:</label>
+      <input type="checkbox" id="random-message" name="random-message">
+      <br>
+      <div class="preview">
+        <iframe id="preview-iframe"></iframe>
+      </div>
+      <br>
       <input type="submit" value="Deface">
     </form>
 
@@ -152,6 +175,7 @@
     const form = document.querySelector('form');
     const urlInput = document.querySelector('input[name="url"]');
     const messageInput = document.querySelector('textarea[name="message"]');
+    const randomMessageInput = document.querySelector('input[name="random-message"]');
 
     // Get the progress bar elements
     const progressBar = document.querySelector('.progress-bar');
@@ -161,6 +185,10 @@
     const modal = document.querySelector('.modal');
     const modalContent = document.querySelector('.modal-content');
     const defacedWebsite = document.querySelector('#defaced-website');
+
+    // Get the preview elements
+    const preview = document.querySelector('.preview');
+    const previewIframe = document.querySelector('#preview-iframe');
 
     // Add an event listener for the form submit event
     form.addEventListener('submit', (event) => {
@@ -174,13 +202,16 @@
       const url = urlInput.value;
       const message = messageInput.value;
 
+      // Check if the user wants a random message
+      const randomMessage = randomMessageInput.checked;
+
       // Send the URL and message to the server
       fetch('<?php echo $_SERVER['PHP_SELF']; ?>', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url, message }),
+        body: JSON.stringify({ url, message, randomMessage }),
       })
         .then((response) => response.json())
         .then((data) => {
@@ -209,6 +240,61 @@
       // Hide the modal
       modal.style.display = 'none';
     });
+
+    // Add an event listener for the URL input
+    urlInput.addEventListener('input', (event) => {
+      // Get the URL from the input
+      const url = event.target.value;
+
+      // Load the URL in the preview iframe
+      previewIframe.src = url;
+    });
+
+    // Add an event listener for the message input
+    messageInput.addEventListener('input', (event) => {
+      // Get the message from the input
+      const message = event.target.value;
+
+      // Update the preview iframe with the new message
+      const previewDoc = previewIframe.contentDocument;
+      const previewBody = previewDoc.querySelector('body');
+      previewBody.innerHTML = message;
+    });
+
+    // Add an event listener for the random message checkbox
+    randomMessageInput.addEventListener('change', (event) => {
+      // Check if the checkbox is checked
+      const randomMessage = event.target.checked;
+
+      // Disable the message input if the checkbox is checked
+      messageInput.disabled = randomMessage;
+
+      // Update the preview iframe with a random message
+      if (randomMessage) {
+        const randomMessage = generateRandomMessage();
+        const previewDoc = previewIframe.contentDocument;
+        const previewBody = previewDoc.querySelector('body');
+        previewBody.innerHTML = randomMessage;
+      }
+    });
+
+    // Function to generate a random message
+    function generateRandomMessage() {
+      const messages = [
+        'Hacked by DogeSploit.sh!',
+        'Your website has been pwned!',
+        'All your data is belong to us!',
+        'We are Legion.',
+        'We are Anonymous.',
+        'Expect us.',
+      ];
+
+      // Get a random message from the array
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+
+      // Return the random message
+      return randomMessage;
+    }
   </script>
 </body>
 
